@@ -1,33 +1,28 @@
 const accordionBtns = document.querySelectorAll(".accordion");
 
-accordionBtns.forEach((accordion, index) => {
+accordionBtns.forEach((accordion) => {
   accordion.addEventListener("click", toggleAccordion);
-  accordion.addEventListener("keydown", (e) => handleKeyboard(e, index));
+  accordion.addEventListener("keydown", handleKeyPress);
 });
 
-function toggleAccordion(e) {
-  const button = e.currentTarget;
-  const content = button.nextElementSibling;
-  const isOpen = button.getAttribute("aria-expanded") === "true";
+function toggleAccordion() {
+  this.classList.toggle("is-open");
+  let content = this.nextElementSibling;
+  let isExpanded = this.classList.contains("is-open");
 
-  button.setAttribute("aria-expanded", String(!isOpen));
-  button.classList.toggle("is-open");
+  this.setAttribute("aria-expanded", isExpanded);
+  content.setAttribute("aria-hidden", !isExpanded);
 
-  content.style.maxHeight = isOpen ? null : content.scrollHeight + "px";
+  if (content.style.maxHeight) {
+    content.style.maxHeight = null;
+  } else {
+    content.style.maxHeight = content.scrollHeight + "px";
+  }
 }
 
-function handleKeyboard(e, index) {
-  const key = e.key;
-  const total = accordionBtns.length;
-
-  if (key === "ArrowDown") {
-    e.preventDefault();
-    accordionBtns[(index + 1) % total].focus();
-  } else if (key === "ArrowUp") {
-    e.preventDefault();
-    accordionBtns[(index - 1 + total) % total].focus();
-  } else if (key === "Enter" || key === " ") {
-    e.preventDefault();
-    accordionBtns[index].click();
+function handleKeyPress(event) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    toggleAccordion.call(this);
   }
 }
